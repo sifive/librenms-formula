@@ -69,8 +69,8 @@ librenms_config:
 librenms_user:
   user.present:
     - name: {{ librenms.general.user }}
+    - gid: {{ librenms.general.group }}
     - groups:
-      - {{ librenms.general.group }}
       - {{ librenms.lookup.webserver_group }}
     - home: {{ librenms.general.home }}
     - shell: {{ librenms.lookup.nologin_shell}}
