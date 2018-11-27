@@ -8,6 +8,8 @@ librenms_build_base:
     - cwd: {{ librenms.general.app_dir }}
     - runas: {{ librenms.general.user }}
     - name: php {{ librenms.general.app_dir }}/build-base.php
-    - unless: "php {{ librenms.general.app_dir }}/validate.php | grep -E '^DB Schema.*[1-9][0-9]+$'"
     - require:
       - file: librenms_config
+    - onchanges:
+      - git: librenms_git
+      - cmd: librenms_compose_install

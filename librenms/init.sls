@@ -129,8 +129,13 @@ librenms_crontab:
 
 librenms_compose_install:
   cmd.run:
-    - name: ./scripts/composer_wrapper.php install --no-dev
+    - name: ./scripts/composer_wrapper.php install --no-dev || ( touch ./trigger_change_in_git_repo; false )
     - runas: {{ librenms.general.user }}
     - cwd: {{ librenms.general.app_dir }}
     - onchanges:
       - git: librenms_git
+      - file: librenms_compose_trigger
+
+librenms_compose_trigger:
+  file.absent:
+    - name: {{ librenms.general.app_dir }}/trigger_change_in_git_repo
