@@ -65,6 +65,7 @@ librenms_config:
     - mode: 640
     - require:
       - file: librenms_directory
+      - git: librenms_git
 
 librenms_user:
   user.present:
