@@ -61,7 +61,7 @@ librenms_config:
     - source: salt://librenms/files/config.php
     - template: jinja
     - user: {{ librenms.general.user }}
-    - group: {{ librenms.lookup.webserver_group }}
+    - group: {{ librenms.general.group }}
     - mode: 640
     - require:
       - file: librenms_directory
@@ -139,3 +139,22 @@ librenms_compose_install:
 librenms_compose_trigger:
   file.absent:
     - name: {{ librenms.general.app_dir }}/trigger_change_in_git_repo
+
+librenms_permissions:
+  cmd.script:
+    - name: salt://librenms/files/permissions.sh.jinja
+    - template: jinja
+    - context:
+        app_dir: {{ librenms.general.app_dir }}
+        user: {{ librenms.general.user }}
+        group: {{ librenms.general.group }}
+    - onchanges:
+      - cmd: librenms_compose_install
+      - file: librenms_config
+      - file: librenms_custom_htaccess
+      - file: librenms_custom_rewrite_base
+      - file: librenms_directory
+      - file: librenms_log_folder
+      - file: librenms_rrd_folder
+      - git: librenms_git
+      - user: librenms_user

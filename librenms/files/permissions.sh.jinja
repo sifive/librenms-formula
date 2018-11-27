@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -ex
+
+chown -R {{ user }}:{{ group }} \
+  {{ app_dir }}
+
+setfacl -d -m g::rwx \
+  {{ app_dir }}/bootstrap/cache \
+  {{ app_dir }}/storage \
+  {{ app_dir }}/logs \
+  {{ app_dir }}/rrd
+
+chmod -R ug=rwX \
+  {{ app_dir }}/bootstrap/cache \
+  {{ app_dir }}/storage \
+  {{ app_dir }}/logs \
+  {{ app_dir }}/rrd
