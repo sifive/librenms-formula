@@ -5,11 +5,13 @@ set -ex
 chown -R {{ user }}:{{ group }} \
   {{ app_dir }}
 
+{%- if grains['os_family'] != 'FreeBSD' %}
 setfacl -d -m g::rwx \
   {{ app_dir }}/bootstrap/cache \
   {{ app_dir }}/storage \
   {{ app_dir }}/logs \
   {{ app_dir }}/rrd
+{%- endif%}
 
 chmod -R ug=rwX \
   {{ app_dir }}/bootstrap/cache \
