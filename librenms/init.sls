@@ -1,4 +1,5 @@
 {% from "librenms/map.jinja" import librenms with context %}
+
 librenms_pkgs_install:
   pkg.installed:
     - names: {{ librenms.lookup.pkgs }}
@@ -8,6 +9,9 @@ librenms_directory:
     - name: {{ librenms.general.app_dir }}
     - user: {{ librenms.general.user }}
     - group: {{ librenms.general.group }}
+    - recurse:
+      - user
+      - group
     - require:
       - user: librenms_user
       - group: librenms_user
@@ -83,9 +87,10 @@ librenms_user:
     - addusers:
       - {{ librenms.lookup.webserver_user }}
 
-librenms_log_folder:
+{% for subdir in ['bootstrap/cache', 'logs', 'rrd', 'storage'] %}
+librenms_{{ subdir | replace('/', '_') }}_folder:
   file.directory:
-    - name: {{ librenms.general.app_dir }}/logs
+    - name: {{ librenms.general.app_dir }}/{{ subdir }}
     - user: {{ librenms.general.user }}
     - group: {{ librenms.general.group }}
     - recurse:
@@ -94,18 +99,21 @@ librenms_log_folder:
     - mode: 775
     - require:
       - git: librenms_git
+      - cmd: librenms_compose_install
 
-librenms_rrd_folder:
-  file.directory:
-    - name: {{ librenms.general.app_dir }}/rrd
-    - user: {{ librenms.general.user }}
-    - group: {{ librenms.general.group }}
-    - recurse:
-      - user
-      - group
-    - mode: 775
+{%  if grains['os_family'] != 'FreeBSD' %}
+librenms_{{ subdir | replace('/', '_') }}_acl:
+  acl.present:
+    - name: {{ librenms.general.app_dir }}/{{ subdir }}
+    - acl_type: default:group
+    - acl_name: {{ librenms.general.group }}
+    - perms: rwx
     - require:
+      - file: {{ librenms.general.app_dir }}/{{ subdir }}
       - git: librenms_git
+      - cmd: librenms_compose_install
+{%  endif %}
+{% endfor %}
 
 librenms_crontab:
 {% if grains['os_family'] == 'FreeBSD' %}
@@ -139,22 +147,3 @@ librenms_compose_install:
 librenms_compose_trigger:
   file.absent:
     - name: {{ librenms.general.app_dir }}/trigger_change_in_git_repo
-
-librenms_permissions:
-  cmd.script:
-    - name: salt://librenms/files/permissions.sh.jinja
-    - template: jinja
-    - context:
-        app_dir: {{ librenms.general.app_dir }}
-        user: {{ librenms.general.user }}
-        group: {{ librenms.general.group }}
-    - onchanges:
-      - cmd: librenms_compose_install
-      - file: librenms_config
-      - file: librenms_custom_htaccess
-      - file: librenms_custom_rewrite_base
-      - file: librenms_directory
-      - file: librenms_log_folder
-      - file: librenms_rrd_folder
-      - git: librenms_git
-      - user: librenms_user
