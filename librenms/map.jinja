@@ -2,6 +2,7 @@
      'lookup': salt['grains.filter_by']({
         'Debian': {
             'pkgs': [
+                'acl',
                 'fping',
                 'git',
                 'graphviz',
@@ -40,7 +41,7 @@
                 'fping',
                 'git',
                 'graphviz',
-                'ImageMagick-nox11',
+                'ImageMagick7-nox11',
                 'mtr-nox11',
                 'nmap',
                 'py27-MySQLdb',
@@ -55,7 +56,7 @@
     'general': {
         'user': 'librenms',
         'group': 'librenms',
-        'home': '/opt/librenms',
+        'app_dir': '/opt/librenms',
     },
     'config': {
         'db': {

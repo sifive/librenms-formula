@@ -20,7 +20,7 @@ $config['memcached']['port']    = {{ librenms.config.memcached.port }};
 $config['user'] = '{{ librenms.general.user }}';
 
 ### Locations - it is recommended to keep the default
-#$config['install_dir']  = "{{ librenms.general.home }}";
+#$config['install_dir']  = "{{ librenms.general.app_dir }}";
 
 ### This should *only* be set if you want to *force* a particular hostname/port
 ### It will prevent the web interface being usable form any other hostname

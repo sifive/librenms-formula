@@ -5,9 +5,11 @@ include:
 
 librenms_build_base:
   cmd.run:
-    - cwd: {{ librenms.general.home }}
+    - cwd: {{ librenms.general.app_dir }}
     - runas: {{ librenms.general.user }}
-    - name: php {{ librenms.general.home }}/build-base.php
-    - unless: "php {{ librenms.general.home }}/validate.php | grep -E '^DB Schema.*[1-9][0-9]+$'"
+    - name: php {{ librenms.general.app_dir }}/build-base.php
     - require:
       - file: librenms_config
+    - onchanges:
+      - git: librenms_git
+      - cmd: librenms_compose_install
