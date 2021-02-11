@@ -66,7 +66,7 @@ librenms_config:
     - template: jinja
     - user: {{ librenms.general.user }}
     - group: {{ librenms.general.group }}
-    - mode: 640
+    - mode: '0640'
     - require:
       - file: librenms_directory
 
@@ -96,7 +96,7 @@ librenms_{{ subdir | replace('/', '_') }}_folder:
     - recurse:
       - user
       - group
-    - mode: 775
+    - mode: '0775'
     - require:
       - git: librenms_git
       - cmd: librenms_compose_install
@@ -124,7 +124,7 @@ librenms_crontab:
       - git: librenms_git
   file.managed:
     - name: /var/cron/tabs/librenms
-    - mode: 600
+    - mode: '0600'
     - user: root
     - group: wheel
 {% else %}
