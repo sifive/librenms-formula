@@ -22,10 +22,10 @@ librenms_git:
     - user: {{ librenms.general.user }}
     - target: {{ librenms.general.app_dir }}
     - rev: {{ librenms.get('revision', 'master') }}
-    - force_checkout: True
-    - force_clone: True
-    - force_fetch: True
-    - force_reset: True
+    - force_checkout: true
+    - force_clone: true
+    - force_fetch: true
+    - force_reset: true
     - require:
       - pkg: librenms_pkgs_install
       - user: librenms_user
@@ -76,14 +76,14 @@ librenms_user:
     - gid: {{ librenms.general.group }}
     - groups:
       - {{ librenms.lookup.webserver_group }}
-    - createhome: False
+    - createhome: false
     - shell: {{ librenms.lookup.nologin_shell}}
-    - system: True
+    - system: true
     - require:
       - group: librenms_user
   group.present:
     - name: {{ librenms.general.group }}
-    - system: True
+    - system: true
     - addusers:
       - {{ librenms.lookup.webserver_user }}
 
