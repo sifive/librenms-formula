@@ -4,21 +4,21 @@ librenms_pkgs_install:
   pkg.installed:
     - names: {{ librenms.lookup.pkgs }}
 
-librenms_directory:
-  file.directory:
-    - name: {{ librenms.general.app_dir }}
-    - user: {{ librenms.general.user }}
-    - group: {{ librenms.general.group }}
-    - recurse:
-      - user
-      - group
-    - require:
-      - user: librenms_user
-      - group: librenms_user
+# librenms_directory:
+#   file.directory:
+#     - name: {{ librenms.general.app_dir }}
+#     - user: {{ librenms.general.user }}
+#     - group: {{ librenms.general.group }}
+#     - recurse:
+#       - user
+#       - group
+#     - require:
+#       - user: librenms_user
+#       - group: librenms_user
 
 librenms_git:
   git.latest:
-    - name: https://github.com/librenms/librenms.git
+    - name: {{ librenms.get('repo', 'https://github.com/librenms/librenms.git') }}
     - user: {{ librenms.general.user }}
     - target: {{ librenms.general.app_dir }}
     - rev: {{ librenms.get('revision', 'master') }}
@@ -87,6 +87,7 @@ librenms_user:
     - addusers:
       - {{ librenms.lookup.webserver_user }}
 
+# set the permissions on directories, including
 {% for subdir in ['bootstrap/cache', 'logs', 'rrd', 'storage'] %}
 librenms_{{ subdir | replace('/', '_') }}_folder:
   file.directory:
@@ -96,22 +97,22 @@ librenms_{{ subdir | replace('/', '_') }}_folder:
     - recurse:
       - user
       - group
-    - mode: '0775'
+    - mode: '02775'
     - require:
       - git: librenms_git
       - cmd: librenms_compose_install
 
 {%  if grains['os_family'] != 'FreeBSD' %}
-librenms_{{ subdir | replace('/', '_') }}_acl:
-  acl.present:
-    - name: {{ librenms.general.app_dir }}/{{ subdir }}
-    - acl_type: default:group
-    - acl_name: {{ librenms.general.group }}
-    - perms: rwx
-    - require:
-      - file: {{ librenms.general.app_dir }}/{{ subdir }}
-      - git: librenms_git
-      - cmd: librenms_compose_install
+# librenms_{{ subdir | replace('/', '_') }}_acl:
+#   acl.present:
+#     - name: {{ librenms.general.app_dir }}/{{ subdir }}
+#     - acl_type: default:group
+#     - acl_name: {{ librenms.general.group }}
+#     - perms: rwx
+#     - require:
+#       - file: {{ librenms.general.app_dir }}/{{ subdir }}
+#       - git: librenms_git
+#       - cmd: librenms_compose_install
 {%  endif %}
 {% endfor %}
 
