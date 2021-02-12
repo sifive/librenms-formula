@@ -4,17 +4,17 @@ librenms_pkgs_install:
   pkg.installed:
     - names: {{ librenms.lookup.pkgs }}
 
-# librenms_directory:
-#   file.directory:
-#     - name: {{ librenms.general.app_dir }}
-#     - user: {{ librenms.general.user }}
-#     - group: {{ librenms.general.group }}
+librenms_directory:
+  file.directory:
+    - name: {{ librenms.general.app_dir }}
+    - user: {{ librenms.general.user }}
+    - group: {{ librenms.general.group }}
 #     - recurse:
 #       - user
 #       - group
-#     - require:
-#       - user: librenms_user
-#       - group: librenms_user
+    - require:
+      - user: librenms_user
+      - group: librenms_user
 
 librenms_git:
   git.latest:
